@@ -1,0 +1,4 @@
+[AWS Pricing calculator]
+https://calculator.aws
+
+AWS Pricing calculatorはクラウドのコストを見積もる簡単な方法。
