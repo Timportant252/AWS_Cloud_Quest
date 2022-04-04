@@ -1,0 +1,51 @@
+AWSをPythonから操作するためのライブラリ
+AWS公式が提供しているライブラリ
+
+Boto3からAWSを操作するにはAPIキーを用意する必要がある。
+・アクセスキー
+・シークレットアクセスキー
+の2つの情報が必要になる。
+
+boto3は環境変数を読み取ることが可能なため
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEYという決められた環境変数にAPIキーを入れておくことで、コードと設定の分離ができる。
+※AWS_DEFAULT_REGION : リージョン
+
+[AWSのリソース上からboto3を使う場合]
+EC2やLambdaからboto3を呼び出す場合は、APIキーを意識せずに使うことができる。
+[ソースコード]
+s3 = boto3.client('s3')
+
+[boto3の基本]
+clientとresource
+S3を利用する場合には以下のように初期化することもできる。
+s3 = boto3.resource('s3')
+s3 = boto3.client('s3')との違いは以下の通り、
+
+<clientの場合>
+s3 = boto3.client('s3')
+# バケット一覧を取得
+s3.list_buckets()
+obj = client.get_objcet(Bucket='test_bucket', key='test.txt')
+print(obj['body'].read())
+
+<resourceの場合>
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('test_bucket')
+obj = bucket.Object('test.text').get()
+print(obj['body'].read())
+
+resourceの方はより、オブジェクト指向のように書くことができる。
+しかし、すべてのサービスで用意されているわけではないことに注意する。
+
+[Waiter]
+boto3にはWaiterと呼ばれるリソースが整うまで待つ機能がある。
+EC2やRDSなど立ち上げに時間のかかる操作をする場合に役に立つ
+[ソースコード]
+s3 = boto3.client('s3')
+
+#objectができるまで待機するwaiterを作成
+waiter = s3.get_waiter('object_exists')
+
+# NewObject.txtが作成されるまでsleepする。
+waiter.wait(Bucket='test_bucket', Key='NewObject.txt')
